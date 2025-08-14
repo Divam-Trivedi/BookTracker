@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['your-domain.com', 'www.your-domain.com', 'IP-address']
+ALLOWED_HOSTS = ['booktracker-cm5e.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -66,6 +66,7 @@ MIDDLEWARE = [
 
     # Required for django-allauth >= 0.64
     'allauth.account.middleware.AccountMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 LOGIN_URL = 'login'  # Our custom login route

@@ -1,0 +1,26 @@
+{% extends 'library/base.html' %}
+{% load static %}
+{% block title %}Similar Recommendations{% endblock %}
+
+{% block content %}
+<section style="padding: 40px;">
+  <h2 style="text-align: center;">Books You Might Like</h2>
+
+  <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px;">
+    {% for book in recommended_books %}
+      <div style="border: 1px solid #ddd; border-radius: 10px; padding: 16px; text-align: center;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <img src="{{ book.cover_url }}" alt="{{ book.title }}"
+             style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+        <h3 style="font-size: 20px;">{{ book.title }}</h3>
+        <p style="color: #777;">by {{ book.author }}</p>
+
+        <form action="{% url 'add_to_library' book.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" style="margin-top: 10px; padding: 8px 16px;">Add to Library</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

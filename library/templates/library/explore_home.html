@@ -1,0 +1,19 @@
+{% extends 'library/base.html' %}
+{% block title %}Explore - Book Tracker{% endblock %}
+
+{% block content %}
+<section style="text-align: center; padding: 60px;">
+  <h2>Explore Recommendations</h2>
+  <p>Discover books curated for you.</p>
+
+  <div style="margin-top: 40px;">
+    <a href="{% url 'explore_similar' %}">
+      <button style="padding: 12px 24px; margin: 10px; font-size: 18px;">📚 Similar Recommendations</button>
+    </a>
+
+    <a href="{% url 'explore_different' %}">
+      <button style="padding: 12px 24px; margin: 10px; font-size: 18px;">🎲 Try Something Different</button>
+    </a>
+  </div>
+</section>
+{% endblock %}

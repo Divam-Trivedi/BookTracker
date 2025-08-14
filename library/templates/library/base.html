@@ -1,0 +1,137 @@
+<!-- templates/library/base.html -->
+{% load static %}
+{% load tz %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Book Tracker{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v={{ now|date:"U" }}">
+  <style>
+    .profile-menu {
+      position: absolute;
+      top: 8px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px; /* space between image and username */
+  }
+
+  .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: 48px; /* push it below the profile icon/username */
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      min-width: 120px;
+      z-index: 1000;
+  }
+
+  .profile-menu:hover .profile-dropdown {
+      display: block;
+  }
+
+
+  /* Menu items */
+  .profile-dropdown a {
+      display: block;
+      padding: 10px;
+      color: black;
+      text-decoration: none;
+      font-size: 14px;
+  }
+  .profile-dropdown a:hover {
+      background: #f0f0f0;
+  }
+
+  /* Show dropdown on hover */
+  .profile-menu:hover .profile-dropdown {
+    display: block;
+  }
+
+  /* Profile icon image */
+  .profile-menu img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+  }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    nav {
+      background-color: #f4f4f4;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      color: #007BFF;
+    }
+
+    main {
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'my_library' %}">My Library</a>
+    <a href="{% url 'surprise_start' %}">Surprise Me</a>
+    <a href="{% url 'explore_home' %}">Explore</a>
+  </nav>
+
+  <!-- User Profile Menu -->
+  <div class="profile-menu">
+      {% if user.is_authenticated %}
+          <!-- Logged-in view: show profile picture + username -->
+           <span class="username" style="margin-left: 8px; font-weight: 600;">{{ user.username }}</span>
+          <img src="{% static 'images/profile_user.png' %}" alt="User Profile" class="profile-icon">
+          <div class="profile-dropdown">
+              <a href="{% url 'logout' %}">Logout</a>
+          </div>
+      {% else %}
+          <!-- Not logged in: default icon -->
+          <img src="{% static 'images/login_user.png' %}" alt="User Profile" class="profile-icon">
+          <div class="profile-dropdown">
+              <a href="{% url 'login' %}">Login</a>
+              <a href="{% url 'signup' %}">Register</a>
+          </div>
+      {% endif %}
+  </div>
+
+
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  
+</body>
+</html>

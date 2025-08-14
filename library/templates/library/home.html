@@ -1,0 +1,54 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Home - Book Tracker{% endblock %}
+
+{% block content %}
+<section class="home-section" style="text-align: center; padding: 40px;">
+
+  <!-- Search -->
+  <form method="GET" action="{% url 'search_books' %}" style="text-align: center; margin-bottom: 30px;">
+  <input type="text" name="q" placeholder="Search by title or author..."
+         style="padding: 10px 20px; width: 300px; border-radius: 8px; border: 1px solid #ccc;">
+  <button type="submit" style="padding: 10px 20px; border-radius: 8px; background-color: #4CAF50; color: white; border: none;">
+    Search
+  </button>
+</form>
+
+<hr style="margin: 40px 0;">
+
+<h2 style="margin-bottom: 20px;">Add a Custom Book</h2>
+
+<form method="POST" action="{% url 'add_custom_book' %}" enctype="multipart/form-data"
+      style="display: inline-block; text-align: left; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  {% csrf_token %}
+
+  <label>Title*:</label><br>
+  <input type="text" name="title" required style="width: 300px; padding: 8px; margin-bottom: 10px;"><br>
+
+  <label>Author(s):</label><br>
+  <input type="text" name="authors" placeholder="Separate multiple authors with commas"
+         style="width: 300px; padding: 8px; margin-bottom: 10px;"><br>
+
+  <label>Genre:</label><br>
+  <input type="text" name="categories" placeholder="e.g. Fiction, Science"
+         style="width: 300px; padding: 8px; margin-bottom: 10px;"><br>
+
+  <label>Cover Image:</label><br>
+  <input type="file" name="cover_image" accept="image/*" style="margin-bottom: 10px;"><br>
+
+  <label>Reading Status:</label><br>
+  <select name="status" style="width: 300px; padding: 8px; margin-bottom: 10px;">
+    <option value="Not Started">Not Started</option>
+    <option value="Reading">Reading</option>
+    <option value="Completed">Completed</option>
+  </select><br>
+
+  <button type="submit"
+          style="padding: 10px 20px; border-radius: 8px; background-color: #4CAF50; color: white; border: none;">
+    Add to Library
+  </button>
+</form>
+
+
+</section>
+{% endblock %}

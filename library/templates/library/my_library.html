@@ -1,0 +1,142 @@
+{% extends 'library/base.html' %}
+{% load static %}
+
+{% block title %}My Library - Book Tracker{% endblock %}
+
+{% block content %}
+<section style="padding: 40px;">
+  <h2 style="text-align: center; margin-bottom: 40px;">My Library</h2>
+
+  <!-- Status filter -->
+  <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+    <select id="statusFilter" onchange="filterBooks(this.value)" 
+            style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
+      <option value="all" {% if current_filter == 'all' %}selected{% endif %}>All Books</option>
+      <option value="read" {% if current_filter == 'read' %}selected{% endif %}>Read</option>
+      <option value="reading" {% if current_filter == 'reading' %}selected{% endif %}>Reading</option>
+      <option value="unread" {% if current_filter == 'unread' %}selected{% endif %}>Unread</option>
+    </select>
+  </div>
+
+  {% if user_books %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px;">
+      {% for user_book in user_books %}
+        {% comment %} Outer card with status-based glow {% endcomment %}
+        {% if user_book.status == 'unread' %}
+          <div class="book-card" data-status="{{ user_book.status }}"
+              style="border: 1px solid #e74c3c; border-radius: 8px; padding: 15px;
+                      box-shadow: 0 4px 6px rgba(231, 76, 60, 0.4);
+                      background: #fff; display: flex; flex-direction: column; align-items: center;
+                      position: relative;">
+        {% elif user_book.status == 'reading' %}
+          <div class="book-card" data-status="{{ user_book.status }}"
+              style="border: 1px solid #f39c12; border-radius: 8px; padding: 15px;
+                      box-shadow: 0 4px 6px rgba(243, 156, 18, 0.4);
+                      background: #fff; display: flex; flex-direction: column; align-items: center;
+                      position: relative;">
+        {% else %}
+          <div class="book-card" data-status="{{ user_book.status }}"
+              style="border: 1px solid #2ecc71; border-radius: 8px; padding: 15px;
+                      box-shadow: 0 4px 6px rgba(46, 204, 113, 0.4);
+                      background: #fff; display: flex; flex-direction: column; align-items: center;
+                      position: relative;">
+        {% endif %}
+
+          <!-- Cover -->
+          <div style="width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; background-color: #fff; overflow: hidden; border-radius: 8px; margin-bottom: 12px;">
+            {% if user_book.book.thumbnail %}
+              <img src="{{ user_book.book.thumbnail }}"
+                  alt="{{ user_book.book.title }}"
+                  style="max-height: 100%; max-width: 100%; object-fit: contain; background: white;"
+                  onerror="this.onerror=null; this.src='{% static 'images/no_image.png' %}';">
+            {% else %}
+              <img src="{% static 'images/no_image.png' %}" alt="No Image"
+                  style="max-height: 100%; max-width: 100%; object-fit: contain; background: white;">
+            {% endif %}
+          </div>
+
+          <!-- Title, Author, Genre -->
+          <h3 style="text-align: center; margin: 10px 0 5px 0;">{{ user_book.book.title }}</h3>
+          <p style="color: #555; font-style: italic; text-align: center;">by {{ user_book.book.authors }}</p>
+          <p style="color: #777; font-size: 0.9em; text-align: center;">Genre: {{ user_book.book.categories|default:"Unknown" }}</p>
+
+          <!-- Dropdown Menu -->
+          <div style="position: absolute; bottom: 12px; right: 12px;">
+            <button onclick="toggleMenu(this)"
+                    style="background: none; border: none; font-size: 22px; cursor: pointer;">⋮</button>
+            <div class="dropdown-content" style="
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  bottom: 100%;
+                  background-color: #fff;
+                  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+                  border-radius: 6px;
+                  overflow: hidden;
+                  z-index: 10;
+                ">
+              <form method="POST" action="{% url 'update_status' user_book.pk %}?status={{ current_filter }}">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="read">
+                <button type="submit" style="padding: 10px; width: 100%; border: none; text-align: left;">
+                  Mark as Read
+                </button>
+              </form>
+              <form method="POST" action="{% url 'update_status' user_book.pk %}?status={{ current_filter }}">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="reading">
+                <button type="submit" style="padding: 10px; width: 100%; border: none; text-align: left;">
+                  Mark as Reading
+                </button>
+              </form>
+              <form method="POST" action="{% url 'update_status' user_book.pk %}?status={{ current_filter }}">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="unread">
+                <button type="submit" style="padding: 10px; width: 100%; border: none; text-align: left;">
+                  Mark as Unread
+                </button>
+              </form>
+              <form method="POST" action="{% url 'remove_book' user_book.pk %}?status={{ current_filter }}">
+                {% csrf_token %}
+                <button type="submit" style="padding: 10px; width: 100%; border: none; text-align: left; color: red;">
+                  Remove
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="text-align: center; font-size: 18px; color: #999;">
+      Your library is empty. Add some books!
+    </p>
+  {% endif %}
+</section>
+
+<script>
+  function toggleMenu(button) {
+    const menu = button.nextElementSibling;
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    // Hide any other open menus
+    document.querySelectorAll('.dropdown-content').forEach(el => {
+      if (el !== menu) el.style.display = 'none';
+    });
+  }
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.dropdown-content') && !e.target.closest('button')) {
+      document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
+    }
+  });
+
+  // Filter cards by status
+  function filterBooks(status) {
+    document.querySelectorAll('.book-card').forEach(card => {
+      const s = card.getAttribute('data-status');
+      card.style.display = (status === 'all' || s === status) ? 'flex' : 'none';
+    });
+  }
+</script>
+{% endblock %}

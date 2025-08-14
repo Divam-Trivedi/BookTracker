@@ -1,0 +1,30 @@
+{% extends 'library/base.html' %}
+{% load static %}
+
+{% block title %}Suggestions{% endblock %}
+
+{% block content %}
+<section style="padding: 40px;">
+  <h2 style="text-align: center;">
+    {% if mode == "taste" %} Based on Your Taste {% elif mode == "different" %} Try Something New {% endif %}
+  </h2>
+
+  {% if suggestions %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; margin-top: 30px;">
+      {% for book in suggestions %}
+        <div style="border: 1px solid #ddd; border-radius: 10px; padding: 16px; text-align: center;">
+          <img src="{{ book.cover_url }}" alt="{{ book.title }}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
+          <h3>{{ book.title }}</h3>
+          <p>by {{ book.author }}</p>
+          <form method="POST" action="{% url 'add_to_library' book.id %}">
+            {% csrf_token %}
+            <button type="submit" style="margin-top: 10px;">Add to Library</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="text-align: center;">No suggestions found.</p>
+  {% endif %}
+</section>
+{% endblock %}

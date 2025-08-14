@@ -1,0 +1,41 @@
+{% extends "library/base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">Log In</h1>
+
+    {% if error %}
+      <p class="auth-error" style="color: red; margin-bottom: 10px;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Social login logos -->
+    <div class="social-login-logos">
+        <a href="{% provider_login_url 'google' process='login' %}">
+            <img src="{% static 'images/google-icon-100.svg' %}" class="social-logo google-logo" alt="Google Login">
+        </a>
+        <a href="{% provider_login_url 'apple' process='login' %}">
+            <img src="{% static 'images/apple-icon-rainbow.svg' %}" class="social-logo apple-logo" alt="Apple Login">
+        </a>
+    </div>
+
+    <div class="divider"><span>or</span></div>
+
+    <!-- Email/password login form -->
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <p>
+            <input type="email" name="login" placeholder="Email or username" required value="{{ request.POST.login|default_if_none:'' }}">
+        </p>
+        <p>
+            <input type="password" name="password" placeholder="Password" required>
+        </p>
+        <button type="submit" class="btn-primary">Log In</button>
+    </form>
+
+    <p class="auth-link">
+        Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+    </p>
+</div>
+{% endblock %}

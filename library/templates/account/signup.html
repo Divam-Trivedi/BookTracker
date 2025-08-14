@@ -1,0 +1,52 @@
+{% extends "library/base.html" %}
+{% load static %}
+{% load socialaccount %}
+{% load i18n %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">Create Account</h1>
+
+    {% if error %}
+      <p class="auth-error" style="color: red; margin-bottom: 10px;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Social signup logos -->
+    <div class="social-login-logos">
+        <a href="{% provider_login_url 'google' process='signup' %}">
+            <img src="{% static 'images/google-icon-100.svg' %}" class="social-logo google-logo" alt="Google Signup">
+        </a>
+        <a href="{% provider_login_url 'apple' process='signup' %}">
+            <img src="{% static 'images/apple-icon-rainbow.svg' %}" class="social-logo apple-logo" alt="Apple Signup">
+        </a>
+    </div>
+
+    <div class="divider"><span>or</span></div>
+
+    <!-- Manual signup form -->
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <p>
+            <input type="email" name="email" id="id_email" placeholder="Enter your email" required value="{{ email|default_if_none:'' }}">
+        </p>
+
+        <p>
+            <input type="text" name="username" id="id_username" placeholder="Enter your username" required value="{{ username|default_if_none:'' }}">
+        </p>
+
+        <p>
+            <input type="password" name="password1" id="id_password1" placeholder="Enter your password" required>
+        </p>
+
+        <p>
+            <input type="password" name="password2" id="id_password2" placeholder="Confirm your password" required>
+        </p>
+
+        <button type="submit" class="btn-primary">Sign Up</button>
+    </form>
+
+    <p class="auth-link">
+        Already have an account? <a href="{% url 'login' %}">Log in</a>
+    </p>
+</div>
+{% endblock %}

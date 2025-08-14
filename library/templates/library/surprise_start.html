@@ -1,0 +1,21 @@
+{% extends 'library/base.html' %}
+{% load static %}
+{% block title %}Surprise Me - Book Tracker{% endblock %}
+
+{% block content %}
+<section style="text-align: center; padding: 60px 20px;">
+  
+  <!-- Surprise Me Image (can be any placeholder for now) -->
+  <a href="{% url 'surprise_result' %}">
+    <img src="{% static 'images/surprise_start_image.png' %}" 
+         alt="Surprise Me" 
+         style="width: 500px; height: 500px; object-fit: cover; border-radius: 8px; box-shadow: 0 0px 0px rgba(0,0,0,0.1); cursor: pointer;">
+  </a>
+
+  <!-- Caption -->
+  <p style="margin-top: 24px; font-size: 18px; color: #555;">
+    One random book from the catalog
+  </p>
+
+</section>
+{% endblock %}
